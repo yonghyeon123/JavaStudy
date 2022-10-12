@@ -1,0 +1,40 @@
+package day0922;
+// 별찍기 7번
+
+import java.util.Scanner;
+
+public class StarPrinter07 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("***** 별찍기 7번 *****");
+        System.out.println("출력할 줄 수를 입력해주세요.");
+        System.out.print("> ");
+        int userNumber = scanner.nextInt();
+
+        // 윗부분을 담당하는 i for문
+        for (int i = 1; i <= userNumber - 1; i++) {
+            // i번째 줄에 출력할 내용을 저장할 String 변수
+            String content = "";
+
+            // 별을 담당하는 j for문
+            for(int j = 1; j <= i; j++){
+                content += "*";
+            }
+
+            System.out.println(content);
+        }
+        // 아랫부분을 담당하는 i for문
+        for(int i = 1; i <= userNumber; i++){
+            // i번째 줄에 출력할 내용을 저장할 String 변수
+            String content = "";
+
+            // 별을 담당하는 j for문
+            for(int j = i; j <= userNumber; j++){
+                content += "*";
+            }
+
+            System.out.println(content);
+        }
+
+    }
+}
