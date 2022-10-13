@@ -1,14 +1,26 @@
 package connector;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class MySqlConnector implements DBConnector {
+    private final String ADDRESS = "jdbc:mysql://localhost:3306/sqlbasic";
+    private final String USERNAME = "root";
+    private final String PASSWORD = "1111";
+
     @Override
     public Connection makeConnection() {
-        System.out.println("MySQL 연결 시작!");
-        System.out.println("서버랑 접속 성공!");
-        System.out.println("아이디 비번 입력 완료!");
-        System.out.println("MySQL 서버에 연결되었습니다.");
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(ADDRESS, USERNAME, PASSWORD);
+
+            return connection;
+        }
+        catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

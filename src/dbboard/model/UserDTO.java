@@ -1,4 +1,4 @@
-package day1012;
+package dbboard.model;
 
 public class UserDTO {
     private int id;

@@ -1,4 +1,4 @@
-package day1012;
+package dbboard.viewer;
 
 public class UserViewer {
 }
