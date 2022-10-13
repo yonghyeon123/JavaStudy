@@ -5,7 +5,9 @@ import dbboard.model.ReplyDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ReplyController {
     private Connection connection;
@@ -54,4 +56,57 @@ public class ReplyController {
         }
     }
 
+    public ArrayList<ReplyDTO> selectAll(){
+        ArrayList<ReplyDTO> temp = new ArrayList<>();
+
+        String query = "SELECT * FROM `reply` ORDER BY `id` DESC";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                ReplyDTO r = new ReplyDTO();
+                r.setId(rs.getInt("id"));
+                r.setWriterId(rs.getInt("writerId"));
+                r.setBoardId(rs.getInt("boardId"));
+                r.setContent(rs.getString("content"));
+                r.setWrittenDate(rs.getTimestamp("writtenDate"));
+                r.setUpdatedDate(rs.getTimestamp("updatedDate"));
+
+                temp.add(r);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return temp;
+    }
+
+    public ReplyDTO selectOne(int id){
+        String query = "SELECT * FROM `reply` WHERE `id` = ?";
+
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                ReplyDTO temp = new ReplyDTO();
+
+                temp.setId(rs.getInt("id"));
+                temp.setWriterId(rs.getInt("writerId"));
+                temp.setBoardId(rs.getInt("boardId"));
+                temp.setContent(rs.getString("content"));
+                temp.setWrittenDate(rs.getTimestamp("writtenDate"));
+                temp.setUpdatedDate(rs.getTimestamp("updatedDate"));
+
+                return temp;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

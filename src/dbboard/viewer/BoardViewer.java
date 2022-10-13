@@ -68,9 +68,12 @@ public class BoardViewer {
         }
         else{
             UserController userController = new UserController(connector);
+
+            System.out.println("\n--------------------------------");
             for(BoardDTO b : list){
                 System.out.printf("%d, %s - by %s\n", b.getId(), b.getTitle(), userController.selectNicknameById(b.getWriterId()));
             }
+            System.out.println("--------------------------------\n");
 
             String message = "상세보기할 글의 번호나 뒤로 가실려면 0을 입력해주세요.";
             int userInput = ScannerUtil.nextInt(scanner, message);
@@ -95,7 +98,7 @@ public class BoardViewer {
 
         System.out.println("제목 : " + b.getTitle());
         System.out.println("글 번호 : " + b.getId());
-        System.out.println("작성자" + userController.selectNicknameById(b.getWriterId()));
+        System.out.println("작성자 : " + userController.selectNicknameById(b.getWriterId()));
         System.out.println("작성일 : " + sdf.format(b.getWrittenDate()));
         System.out.println("수정일 : " + sdf.format(b.getUpdatedDate()));
         System.out.println("내용");
@@ -113,6 +116,8 @@ public class BoardViewer {
             }
             else if(userChoice == 3){
                 //댓글 showMenu 로 이동
+                ReplyViewer replyViewer = new ReplyViewer(logIn, id);
+                replyViewer.showMenu();
             }
             else if(userChoice == 4){
                 printList();
