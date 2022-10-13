@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ReplyViewer {
-    private final String DATE_FORMAT= "yy년 MM월 dd일 HH시 mm분 ss초";
+    private final String DATE_FORMAT= "yy-MM-dd HH:mm:ss";
     private Scanner scanner;
     private DBConnector connector;
     private UserDTO logIn;
@@ -35,11 +35,9 @@ public class ReplyViewer {
 
             if(userChoice == 1){
                 write();
-            }
-            else if(userChoice == 2){
+            } else if(userChoice == 2){
                 printList();
-            }
-            else if(userChoice == 3){
+            } else if(userChoice == 3){
                 System.out.println("뒤로 돌아갑니다.");
                 break;
             }
@@ -61,12 +59,10 @@ public class ReplyViewer {
     private void printList(){
         UserController userController = new UserController(connector);
         ReplyController replyController = new ReplyController(connector);
-        ArrayList<ReplyDTO> list = replyController.selectAll();
+        ArrayList<ReplyDTO> list = replyController.selectAll(boardId);
 
         for(ReplyDTO r : list){
-            if(r.getBoardId() == boardId){
-                System.out.printf("%d, %s : %s\n", r.getId(), userController.selectNicknameById(r.getWriterId()), r.getContent());
-            }
+            System.out.printf("%d, %s : %s\n", r.getId(), userController.selectNicknameById(r.getWriterId()), r.getContent());
         }
 
         String message = "상세보기할 댓글의 번호나 0을 뒤로 가실려면 0을 입력하세요.";
@@ -101,11 +97,9 @@ public class ReplyViewer {
 
         if(userChoice == 1){
             update(id);
-        }
-        else if(userChoice == 2){
+        } else if(userChoice == 2){
             delete(id);
-        }
-        else if(userChoice == 3){
+        } else if(userChoice == 3){
             System.out.println("뒤로 돌아갑니다.");
         }
     }

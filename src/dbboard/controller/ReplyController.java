@@ -56,12 +56,13 @@ public class ReplyController {
         }
     }
 
-    public ArrayList<ReplyDTO> selectAll(){
+    public ArrayList<ReplyDTO> selectAll(int boardId){
         ArrayList<ReplyDTO> temp = new ArrayList<>();
+        String query = "SELECT * FROM `reply` WHERE `boardId` = ? ORDER BY `id` DESC";
 
-        String query = "SELECT * FROM `reply` ORDER BY `id` DESC";
         try {
             PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, boardId);
             ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()){
@@ -75,8 +76,7 @@ public class ReplyController {
 
                 temp.add(r);
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
