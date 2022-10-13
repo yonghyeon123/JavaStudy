@@ -57,4 +57,31 @@ public class UserController {
 
         return null;
     }
+
+    public void update(UserDTO userDTO){
+        String query = "UPDATE `user` SET `password` = ?, `nickname` = ? WHERE `id` = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, userDTO.getPassword());
+            pstmt.setString(2, userDTO.getNickname());
+            pstmt.setInt(3, userDTO.getId());
+
+            pstmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(int id){
+        String query = "DELETE FROM `user` WHERE `id` = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
