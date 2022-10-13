@@ -3,6 +3,7 @@ package dbboard.viewer;
 import java.util.Scanner;
 import connector.DBConnector;
 import connector.MySqlConnector;
+import dbboard.controller.BoardController;
 import dbboard.controller.UserController;
 import dbboard.model.UserDTO;
 import util.ScannerUtil;
@@ -19,7 +20,7 @@ public class UserViewer {
 
     //인덱스 화면
     public void showIndex(){
-        String message = "1. 로그인 2. 회원가입 3. 종료";
+        String message = "\n1. 로그인 2. 회원가입 3. 종료";
 
         while(true){
             int userChoice = ScannerUtil.nextInt(scanner, message);
@@ -95,18 +96,19 @@ public class UserViewer {
     }
 
     private void showMenu(){
-        String message = "1. 게시판 이름 2. 회원 정보 보기 3. 로그아웃";
+        String message = "\n1. 게시판 이름 2. 회원 정보 보기 3. 로그아웃";
         while(logIn != null){
             int userchoice = ScannerUtil.nextInt(scanner, message);
 
             if(userchoice == 1){
-
+                BoardViewer boardViewer = new BoardViewer(logIn);
+                boardViewer.showMenu();
             }
             else if(userchoice == 2){
                 printOne();
             }
             else if(userchoice == 3){
-                System.out.println("정삭적으로 로그아웃하였습니다.");
+                System.out.println("정상적으로 로그아웃하였습니다.");
                 logIn = null;
             }
         }

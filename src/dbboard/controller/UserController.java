@@ -84,4 +84,23 @@ public class UserController {
             e.printStackTrace();
         }
     }
+
+    public String selectNicknameById(int id){
+        String temp = new String();
+        String query = "SELECT `nickname` FROM `user` WHERE `id` = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                return rs.getString("nickname");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return temp;
+    }
 }
