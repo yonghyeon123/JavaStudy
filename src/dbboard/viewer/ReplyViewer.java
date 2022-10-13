@@ -19,32 +19,73 @@ public class ReplyViewer {
     private UserDTO logIn;
     private int boardId;
 
-    public ReplyViewer(UserDTO logIn, int boardId){
+    public ReplyViewer(UserDTO logIn){
         scanner = new Scanner(System.in);
         connector = new MySqlConnector();
         this.logIn = logIn;
-        this.boardId = boardId;
     }
 
-    public void showMenu(){
+    public void showMenu(int boardId){
         BoardViewer boardViewer = new BoardViewer(logIn);
-        String message = "1. 댓글쓰기 2. 댓글 목록 3. 뒤로가기";
+        String message = "1. 댓글 등록 2. 댓글 수정 3. 댓글 삭제 3. 뒤로가기";
 
         while(true){
             int userChoice = ScannerUtil.nextInt(scanner, message);
 
             if(userChoice == 1){
-                write();
-            } else if(userChoice == 2){
-                printList();
-            } else if(userChoice == 3){
-                System.out.println("뒤로 돌아갑니다.");
+                write(boardId);
+                printList(boardId);
+            }
+            else if(userChoice == 2){
+                message = "수정할 댓글의 번호나 뒤로 가실려면 0을 입력해주세요.";
+                userChoice = ScannerUtil.nextInt(scanner, message);
+
+                if (userChoice != 0){
+                    update(userChoice, boardId);
+                }
+                printList(boardId);
+            }
+            else if(userChoice == 3){
+                message = "삭제할 댓글의 번호나 뒤로 가실려면 0을 입력해주세요.";
+                userChoice = ScannerUtil.nextInt(scanner, message);
+
+                if (userChoice != 0){
+                    delete(userChoice, boardId);
+                }
+                printList(boardId);
+            }
+            else if(userChoice == 4){
+                message = "다시 해당 게시글로 이동합니다.";
                 break;
             }
         }
     }
 
-    private void write(){
+    public void printList(int boardId){
+
+        ReplyController replyController = new ReplyController(connector);
+        ArrayList<ReplyDTO> list = replyController.selectAll(boardId);
+
+        if(list.isEmpty()){
+            System.out.println("아직 등록된 댓글이 없습니다.");
+        }
+        else{
+            UserController userController = new UserController(connector);
+
+            System.out.println("--------------------------------");
+            for(ReplyDTO r : list){
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                String date = r.getWrittenDate().compareTo(r.getUpdatedDate()) == 0 ?
+                        sdf.format(r.getWrittenDate()) : sdf.format(r.getUpdatedDate());
+
+                System.out.printf("%d, %s - by [%s] at [%s]\n", r.getId(), r.getContent(),
+                        userController.selectNicknameById(r.getWriterId()), date);
+            }
+            System.out.println("--------------------------------");
+        }
+    }
+
+    private void write(int boardId){
         ReplyDTO r = new ReplyDTO();
         r.setWriterId(logIn.getId());
         r.setBoardId(boardId);
@@ -56,59 +97,35 @@ public class ReplyViewer {
         replyController.insert(r);
     }
 
-    private void printList(){
-        UserController userController = new UserController(connector);
+    private void update(int id, int boardId){
         ReplyController replyController = new ReplyController(connector);
-        ArrayList<ReplyDTO> list = replyController.selectAll(boardId);
-
-        for(ReplyDTO r : list){
-            System.out.printf("%d, %s : %s\n", r.getId(), userController.selectNicknameById(r.getWriterId()), r.getContent());
-        }
-
-        String message = "상세보기할 댓글의 번호나 0을 뒤로 가실려면 0을 입력하세요.";
-        int userInput = ScannerUtil.nextInt(scanner, message);
-
-        if(userInput != 0 && replyController.selectOne(userInput) == null){
-            System.out.println("잘못 입력하셨습니다.");
-            userInput = ScannerUtil.nextInt(scanner, message);
-        }
-
-        if(userInput != 0){
-            printOne(userInput);
-        }
-    }
-
-    private void printOne(int id){
-        UserController userController = new UserController(connector);
-        ReplyController replyController = new ReplyController(connector);
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-
         ReplyDTO r = replyController.selectOne(id);
 
-        System.out.println("댓글 번호 : " + r.getId());
-        System.out.println("작성자 : " + userController.selectNicknameById(r.getWriterId()));
-        System.out.println("댓글 작성일 : " + sdf.format(r.getWrittenDate()));
-        System.out.println("댓글 수정일 : " + sdf.format(r.getUpdatedDate()));
-        System.out.println("내용");
-        System.out.println(r.getContent());
+        if(r != null && r.getWriterId() == logIn.getId() && r.getBoardId() == boardId){
+            String message = "새로운 댓글 내용을 입력해주세요.";
+            r.setContent(ScannerUtil.nextLine(scanner, message));
 
-        String message = "1. 수정 2. 삭제 3. 뒤로가기";
-        int userChoice = ScannerUtil.nextInt(scanner, message);
-
-        if(userChoice == 1){
-            update(id);
-        } else if(userChoice == 2){
-            delete(id);
-        } else if(userChoice == 3){
-            System.out.println("뒤로 돌아갑니다.");
+            replyController.update(r);
+        }
+        else{
+            System.out.println("해당 작업을 진행할 수 없습니다.");
         }
     }
 
-    private void update(int id){
+    private void delete(int id, int boardId){
+        ReplyController replyController = new ReplyController(connector);
+        ReplyDTO r = replyController.selectOne(id);
 
-    }
+        if(r != null && r.getWriterId() == logIn.getId() && r.getBoardId() == boardId){
+            String message = "해당 댓글을 정말 삭제하시겠습니까? Y/N";
+            String yesNo = ScannerUtil.nextLine(scanner, message);
 
-    private void delete(int id){
-
+            if(yesNo.equalsIgnoreCase("Y")){
+                replyController.delete(id);
+            }
+        }
+        else{
+            System.out.println("해당 작업을 진행할 수 없습니다.");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package dbboard.viewer;
 
+import com.mysql.cj.protocol.x.XMessage;
 import connector.DBConnector;
 import connector.MySqlConnector;
 import dbboard.controller.BoardController;
@@ -96,6 +97,7 @@ public class BoardViewer {
 
         BoardDTO b = boardController.selectOne(id);
 
+        System.out.println("\n--------------------------------");
         System.out.println("제목 : " + b.getTitle());
         System.out.println("글 번호 : " + b.getId());
         System.out.println("작성자 : " + userController.selectNicknameById(b.getWriterId()));
@@ -103,9 +105,15 @@ public class BoardViewer {
         System.out.println("수정일 : " + sdf.format(b.getUpdatedDate()));
         System.out.println("내용");
         System.out.println(b.getContent());
+        System.out.println("--------------------------------");
+        System.out.println("댓글");
 
+        ReplyViewer replyViewer = new ReplyViewer(logIn);
+        replyViewer.printList(id);
+
+        String message;
         if(logIn.getId() == b.getId()){
-            String message = "1. 수정 2. 삭제 3. 댓글 이동 4. 뒤로가기";
+            message = "\n1. 수정 2. 삭제 3. 댓글 이동 4. 뒤로가기";
             int userChoice = ScannerUtil.nextInt(scanner, message);
 
             if(userChoice == 1){
@@ -115,12 +123,22 @@ public class BoardViewer {
                 delete(id);
             }
             else if(userChoice == 3){
-                //댓글 showMenu 로 이동
-                ReplyViewer replyViewer = new ReplyViewer(logIn, id);
-                replyViewer.showMenu();
+                replyViewer.showMenu(id);
+                printOne(id);
             }
             else if(userChoice == 4){
                 printList();
+            }
+        }
+        else{
+            message = "1. 댓글 메뉴 2. 뒤로 가기";
+            int userchoice = ScannerUtil.nextInt(scanner, message);
+
+            if(userchoice == 1){
+
+            }
+            else if(userchoice == 2){
+                printOne(id);
             }
         }
     }
