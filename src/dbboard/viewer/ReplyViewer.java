@@ -15,6 +15,6 @@ public class ReplyViewer {
     }
 
     public void showMenu(){
-        String message = "1. 댓글쓰기 2. 뒤로가기";
+        String message = "1. 댓글쓰기 2. 댓글 목록 3. 뒤로가기";
     }
 }

@@ -102,7 +102,7 @@ public class BoardViewer {
         System.out.println(b.getContent());
 
         if(logIn.getId() == b.getId()){
-            String message = "1. 수정 2. 삭제 3. 뒤로가기";
+            String message = "1. 수정 2. 삭제 3. 댓글 이동 4. 뒤로가기";
             int userChoice = ScannerUtil.nextInt(scanner, message);
 
             if(userChoice == 1){
@@ -112,6 +112,9 @@ public class BoardViewer {
                 delete(id);
             }
             else if(userChoice == 3){
+                //댓글 showMenu 로 이동
+            }
+            else if(userChoice == 4){
                 printList();
             }
         }
